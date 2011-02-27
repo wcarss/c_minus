@@ -18,7 +18,7 @@ static TreeNode * savedTree; /* stores syntax tree for later return */
 extern int yychar;
 
 int yyerror(char * message)
-{ fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
+{ fprintf(listing,"Syntax error at line %d, col %d: %s\n",lineno,col,message);
   fprintf(listing,"Current token: ");
   printToken(yychar,tokenString);
   return 0;

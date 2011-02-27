@@ -22,42 +22,43 @@ whitespace  [ \t]+
 
 %%
 
-"else"          {return ELSE;}
-"if"            {return IF;}
-"int"           {return INT;}
-"return"        {return RETURN;}
-"void"		{return VOID;}
-"while"		{return WHILE;}
-"read"          {return READ;}
-"write"         {return WRITE;}
-"+"             {return PLUS;}
-"-"             {return MINUS;}
-"*"             {return TIMES;}
-"/"             {return OVER;}
-"<"             {return LT;}
-"<="		{return LTEQ;}
-">"		{return GT;}
-">="		{return GTEQ;}
-"=="             {return EQ;}
-"!="             {return NEQ;}
-"="            {return ASSIGN;}
-";"             {return SEMICOLON;}
-","		{return COMMA;}
-"("             {return LPAREN;}
-")"             {return RPAREN;}
-"["             {return LBRACKET;}
-"]"             {return RBRACKET;}
-"{"             {return LBRACE;}
-"}"             {return RBRACE;}
-{identifier}    {return ID;}
-{number}        {return NUM;}
-{newline}       {lineno++;}
-{whitespace}    {/* skip whitespace */}
+"else"          {col += 4; return ELSE;}
+"if"            {col += 2; return IF;}
+"int"           {col += 3; return INT;}
+"return"        {col += 6; return RETURN;}
+"void"		{col += 4; return VOID;}
+"while"		{col += 5; return WHILE;}
+"read"          {col += 4; return READ;}
+"write"         {col += 5; return WRITE;}
+"+"             {col += 1; return PLUS;}
+"-"             {col += 1; return MINUS;}
+"*"             {col += 1; return TIMES;}
+"/"             {col += 1; return OVER;}
+"<"             {col += 1; return LT;}
+"<="		{col += 2; return LTEQ;}
+">"		{col += 1; return GT;}
+">="		{col += 2; return GTEQ;}
+"=="             {col += 2; return EQ;}
+"!="             {col += 2; return NEQ;}
+"="            {col += 1; return ASSIGN;}
+";"             {col += 1; return SEMICOLON;}
+","		{col += 1; return COMMA;}
+"("             {col += 1; return LPAREN;}
+")"             {col += 1; return RPAREN;}
+"["             {col += 1; return LBRACKET;}
+"]"             {col += 1; return RBRACKET;}
+"{"             {col += 1; return LBRACE;}
+"}"             {col += 1; return RBRACE;}
+{identifier}    {col += strlen(yytext); return ID;}
+{number}        {col += strlen(yytext); return NUM;}
+{newline}       {col = 0; lineno++;}
+{whitespace}    {col += strlen(yytext); /* skip whitespace */}
 "/*"             { char c; int s = 0;
                   do
                   { c = input();
+		    col++;
                     if (c == EOF) break;
-                    if (c == '\n') lineno++;
+                    if (c == '\n'){col = 0; lineno++;}
 		    
 		    if (s == 0 && c == '*') s = 1;
 		    else if (s == 1 && c == '*') s = 1;
@@ -65,7 +66,7 @@ whitespace  [ \t]+
 		    else s = 0;
                   } while (s != 2);
                 }
-.               {return ERROR;}
+.               {col += 1; return ERROR;}
 
 %%
 
@@ -81,7 +82,7 @@ int getToken(void)
   currentToken = yylex();
   strncpy(tokenString, yytext, MAXTOKENLEN);
   if (TraceScan) {
-    fprintf(listing,"\t%d: ",lineno);
+    fprintf(listing,"\t%d:%d: ",lineno,col);
     printToken(currentToken,tokenString);
   }
   return currentToken;

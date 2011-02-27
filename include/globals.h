@@ -24,6 +24,7 @@ extern FILE* source; /* source code text file */
 extern FILE* listing; /* listing output text file */
 extern FILE* code; /* code text file for TM simulator */
 extern int lineno; /* source line number for listing */
+extern int col; /* source line number for listing */
 
 /**************************************************/
 /***********   Syntax tree for parsing ************/
