@@ -1,0 +1,25 @@
+/*************************************************************/
+/*   File: GCD.CM                                            */
+/*   A C- program to perform Euclid's Algorithm              */
+/*     to compute gcd                                        */
+/*   From: Compiler Construction: Principles and Practice    */
+/*         PWS Publishing Co., 1997.                         */
+/*   K. Louden, Dept. of Math & Computer Science             */
+/*   San Jose State University, San Jose, CA 95192-0103      */
+/*   (408) 924-5134   louden@cs.sjsu.edu                     */
+/*   http://www.mathcs.sjsu.edu/faculty/louden/              */
+/*************************************************************/
+
+int gcd (int u, int v)
+{ if (v == 0) return u ;
+  else return gcd(v,u-u/v*v);
+         /* u-u/v*v == u mod v */
+}
+
+void main(void)
+{ int x; int y;
+  x = input(); y = input();
+  output(gcd(x,y));
+}
+
+

@@ -1,0 +1,37 @@
+
+>>>>> C-MINUS COMPILATION: gcd.cm
+
+  fun: gcd: int
+    param: u: int
+    param: v: int
+    Cmpd
+      If
+        Op: ==
+          Id: v
+          Const: 0
+        Return
+          Id: u
+        Return
+          Call: gcd
+            Id: v
+            Op: -
+              Id: u
+              Op: *
+                Op: /
+                  Id: u
+                  Id: v
+                Id: v
+  fun: main: void
+    Cmpd
+      var: x: int
+      var: y: int
+      Op: =
+        Id: x
+        Call: input
+      Op: =
+        Id: y
+        Call: input
+      Call: output
+        Call: gcd
+          Id: x
+          Id: y

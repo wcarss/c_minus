@@ -1,0 +1,20 @@
+
+   This directory contains all the required files for building a parser 
+for the Tiny language.  
+
+   To build the parser, type "make" in the current directory, which will 
+generate an executable program called "tiny".
+
+   To test source code like "gcd.tiny", type "./tiny gcd.tiny" and the syntax
+tree will be displayed on the screen.
+
+   To rebuild the parser, type "make clean" and type "make" again.
+
+   There is a parameter "NO_PARSE" in "main.c".  Its default setting is
+FALSE, and the "make" will generate a parser using this value.  If we change 
+the value to TRUE, the "make" will only generate a scanner.
+
+   Note that it's important to use the option "-d" in "yacc -d tiny.y".  This 
+will generate a list of token type values in "y.tab.h", which will be used
+in "lex.yy.c" and "util.c".  Otherwise, the parser may not connect to the 
+scanner properly and util.c may not display the syntax tree correctly.
