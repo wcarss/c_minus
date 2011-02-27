@@ -37,7 +37,7 @@ TreeNode * parse(void) {
 
 %}
 
-%token ELSE IF INT RETURN VOID WHILE READ WRITE
+%token ELSE IF INT RETURN VOID WHILE
 %token ID NUM 
 %token PLUS MINUS TIMES OVER LT LTEQ GT GTEQ EQ NEQ ASSIGN SEMICOLON COMMA LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
 %token ERROR 
@@ -48,10 +48,128 @@ TreeNode * parse(void) {
 
 %% /* Grammar for TINY */
 
-program     : stmt_seq
+program     : declaration_list
                  { savedTree = $1;} 
             ;
 
+declaration_list 	: declaration_list declaration 
+			| declaration
+			;
+
+declaration	: var_declaration
+		| fun_declaration
+		;
+
+var_declaration	: type_specifier ID SEMICOLON
+		| type_specifier ID LBRACKET NUM RBRACKET SEMICOLON
+		;
+
+type_specifier	: INT
+		| VOID
+		;
+
+fun_declaration	: type_specifier ID LPAREN params RPAREN compount_stmt
+		;
+
+params	: param_list
+	| VOID
+	;
+
+param_list	: param_list COMMA param
+		| param
+		;
+
+param	: type_specifier ID
+	| type_specifier ID LBRACKET RBRACKET
+	;
+
+compount_stmt	: LBRACE local_declarations stmt_list RBRACE
+		;
+
+local_declarations	: local_declarations var_declaration
+			| /*empty*/
+			;
+
+stmt_list	: stmt_list stmt
+		| /*empty*/
+		;
+
+stmt	: expr_stmt
+	| compount_stmt
+	| selection_stmt
+	| iteration_stmt
+	| return_stmt
+	;
+
+expr_stmt	: expr SEMICOLON
+		| SEMICOLON
+		;
+
+selection_stmt	: IF LPAREN expr RPAREN stmt
+		| IF LPAREN expr RPAREN stmt ELSE stmt
+		;
+
+iteration_stmt	: WHILE LBRACE expr RBRACE stmt
+		;
+
+return_stmt	: RETURN SEMICOLON
+		| RETURN expr SEMICOLON
+		;
+
+expr	: var ASSIGN expr
+	| simple_expr
+	;
+
+var	: ID
+	| ID LBRACKET expr RBRACKET
+	;
+
+simple_expr	: additive_expr relop additive_expr
+		| additive_expr
+		;
+
+relop	: LTEQ
+	| LT
+	| GT
+	| GTEQ
+	| EQ
+	| NEQ
+	;
+
+additive_expr	: additive_expr addop term
+		| term
+		;
+
+addop	: PLUS
+	| MINUS
+	;
+
+term	: term mulop factor
+	| factor
+	;
+
+mulop	: TIMES
+	| OVER
+	;
+
+factor	: LPAREN expr RPAREN
+	| var
+	| call
+	| NUM
+	;
+
+call	: ID LPAREN args RPAREN
+	;
+
+args	: arg_list
+	| /*empty*/
+	;
+
+arg_list	: arg_list COMMA expr
+		| expr
+
+
+/*
 stmt_seq    : stmt_seq SEMICOLON stmt
                  { YYSTYPE t = $1;
                    if (t != NULL)
@@ -168,4 +286,4 @@ exp         : exp LT exp
                  }
             | error { $$ = NULL; }
             ;
-
+*/

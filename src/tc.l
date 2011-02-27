@@ -9,6 +9,11 @@
 #include "scan.h"
 #include "y.tab.h"
 
+/* may be of use later
+"input"          {col += 5; return READ;}
+"output"         {col += 6; return WRITE;}
+*/
+
 /* lexeme of identifier or reserved word */
 char tokenString[MAXTOKENLEN+1];
 %}
@@ -28,8 +33,6 @@ whitespace  [ \t]+
 "return"        {col += 6; return RETURN;}
 "void"		{col += 4; return VOID;}
 "while"		{col += 5; return WHILE;}
-"read"          {col += 4; return READ;}
-"write"         {col += 5; return WRITE;}
 "+"             {col += 1; return PLUS;}
 "-"             {col += 1; return MINUS;}
 "*"             {col += 1; return TIMES;}

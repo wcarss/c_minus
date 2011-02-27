@@ -19,8 +19,8 @@ void printToken( int token, const char* tokenString )
 		case RETURN:
 		case VOID:
 		case WHILE:
-		case READ:
-		case WRITE:
+		/*case READ:
+		case WRITE:*/
 			fprintf(listing, "reserved word: %s\n", tokenString);
 			break;
 		case PLUS: fprintf(listing,"+\n"); break;
