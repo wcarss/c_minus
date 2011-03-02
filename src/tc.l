@@ -83,7 +83,8 @@ int getToken(void)
     yyout = listing;
   }
   currentToken = yylex();
-  strncpy(tokenString, yytext, MAXTOKENLEN);
+  if(currentToken == NUM || currentToken == ID)
+    strncpy(tokenString, yytext, MAXTOKENLEN);
   if (TraceScan) {
     fprintf(listing,"\t%d:%d: ",lineno,col);
     printToken(currentToken,tokenString);

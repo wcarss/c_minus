@@ -4,7 +4,7 @@
 #
 
 CC = gcc
-CFLAGS = -Wall -std=c99 -pedantic 
+CFLAGS = -g -Wall -std=c99 -pedantic 
 OBJS = y.tab.o lex.yy.o util.o main.o
 INCLUDES = -I../include
 I=../include

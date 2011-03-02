@@ -2,7 +2,7 @@ default: all
 
 all: tc
 
-tc: 
+tc: src/ include/
 	cd src; make
 
 clean:

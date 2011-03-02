@@ -10,20 +10,22 @@
  */
 void printToken( int, const char* );
 
-/* creates a new statement node for syntax tree construction
- */
+/* creates a new statement node for syntax tree construction */
 TreeNode * newStmtNode(StmtKind);
 
-/* creates a new expression node for syntax tree construction
- */
+/* creates a new expression node for syntax tree construction */
 TreeNode * newExpNode(ExpKind);
 
-/* allocates and makes a new copy of an existing string
- */
+/* creates a new declaration node for syntax tree construction */
+TreeNode * newDeclNode(DeclKind);
+
+/* creates a new list node for syntax tree construction */
+TreeNode * newListNode(ListKind);
+
+/* allocates and makes a new copy of an existing string */
 char * copyString( char * );
 
-/* prints a syntax tree to the * listing file using indentation to indicate subtrees
- */
+/* prints a syntax tree to the * listing file using indentation to indicate subtrees */
 void printTree( TreeNode * );
 
 #endif
