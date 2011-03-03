@@ -28,10 +28,8 @@ int TraceParse = TRUE;
 int TraceAnalyze = FALSE;
 int TraceCode = FALSE;
 
-main( int argc, char * argv[] )
+int main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
-  int a_flag = 0;
-  int ttype;
   char pgm[120]; /* source code file name */
   if (argc < 2)
     { fprintf(stderr,"usage: %s <filename>\n",argv[0]);

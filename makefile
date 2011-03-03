@@ -9,5 +9,5 @@ clean:
 	cd src; make clean
 
 cleanall:
-	rm -f tc
+	rm -f cm
 	cd src; make cleanall 

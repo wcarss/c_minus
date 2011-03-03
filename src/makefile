@@ -9,8 +9,8 @@ OBJS = y.tab.o lex.yy.o util.o main.o
 INCLUDES = -I../include
 I=../include
 
-tc: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o ../tc -ly -ll
+cm: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o ../cm -ly -ll
 
 main.o: main.c $(I)/globals.h $(I)/util.h $(I)/scan.h $(I)/parse.h
 	$(CC) -c main.c $(INCLUDES) $(CFLAGS)

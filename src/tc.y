@@ -11,7 +11,6 @@
 #include "parse.h"
 
 #define YYSTYPE type_t
-static char * savedName; /* for use in assignments */
 static int savedLineNo;  /* ditto */
 static int saved_col;
 static TreeNode * savedTree; /* stores syntax tree for later return */
@@ -30,7 +29,7 @@ int yyerror(char * message)
 {
   int i;
 
-  fprintf(listing,"\nSyntax error at line %d: col %d, at ",lineno,col,message);
+  fprintf(listing,"\nSyntax error at line %d: col %d, at ",lineno,col);
   printToken(yychar, next_token);
   fprintf(listing,"Current line:\n%s\n",current_line);
 
@@ -113,6 +112,17 @@ var_declaration	: type_specifier ID
 			  $$.node->child[0] = $1.node;
 			  $$.node->child[1] = $5.node;
 			}
+		| type_specifier ID
+			{
+			  $$.node = NULL;
+			}
+			 LBRACKET error
+			{
+			  $$.node = newErrNode();
+			  $$.node->attr.name = copyString(current_line);
+			  $$.node->expected = copyString("size of array (eg '[1]' or '[SIZE]')");
+			  $$.node->col = col;
+			}
 		;
 
 type_specifier	: INT
@@ -126,6 +136,13 @@ type_specifier	: INT
 			  $$.node = newDeclNode(Type);
 			  $$.node->attr.name = copyString("Void");
 			  $$.node->type = Void;
+			}
+		| error
+			{
+			  $$.node = newErrNode();
+			  $$.node->attr.name = copyString(current_line);
+			  $$.node->expected = copyString("INT or VOID");
+			  $$.node->col = col;
 			}
 		;
 
@@ -282,6 +299,13 @@ return_stmt	: RETURN SEMICOLON
 			{
 			  $$.node = newStmtNode(Return);
 			  $$.node->child[0] = $2.node;
+			}
+		| RETURN error
+			{
+		  $$.node = newErrNode();
+		  $$.node->attr.name = copyString(current_line);
+		  $$.node->expected = copyString("semicolon");
+		  $$.node->col =  col;	
 			} 
 		;
 

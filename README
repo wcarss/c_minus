@@ -1,1 +1,48 @@
-Initial readme -- not really worth looking at :P
+Wyatt Carss' C Minus compiler, 'cm'
+
+Introduction:
+	
+	This is a simple scanner/parser which generates an abstract syntax
+	tree for the C Minus language. There is some limited error recovery
+	and syntax errors are printed to screen upon being found.
+
+Usage:
+
+	Install:
+	type 'make' and hit enter to build.
+
+	Run:
+	type './cm <filename>' to see a scanner/parser printout for <filename>,
+	which should be a C Minus file, ending in .cm
+
+	Run for AST only:
+	type './cm <filename> -a' to see only the syntax errors / abstract 
+	syntax tree for the file <filename>
+
+	Uninstall:
+	type 'make cleanall' to clean the project back to source.
+
+Tests:
+
+	Inside of the '/doc' folder, you will find test files test[12345].cm
+
+	test1.cm - compiles correctly.
+	test2.cm - Has a 
+	test3.cm - 
+	test4.cm - 
+	test5.cm - 
+
+Author / License
+
+	This program was created during February and March of 2011.
+
+	Wyatt Carss is a student at the University of Guelph, in his final
+	year of classes. You can reach him at carss.w@gmail.com or at
+	http://wcarss.ca
+
+	This code is open source; use it however you wish (within possible
+	restrictions for using exisitng OSS tools vim, flex, bison, and gcc in
+	its development)
+
+Thanks for checking it out!
+- Wyatt

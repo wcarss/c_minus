@@ -1,25 +1,40 @@
 /*************************************************************/
-/*   File: GCD.CM                                            */
-/*   A C- program to perform Euclid's Algorithm              */
-/*     to compute gcd                                        */
-/*   From: Compiler Construction: Principles and Practice    */
-/*         PWS Publishing Co., 1997.                         */
-/*   K. Louden, Dept. of Math & Computer Science             */
-/*   San Jose State University, San Jose, CA 95192-0103      */
-/*   (408) 924-5134   louden@cs.sjsu.edu                     */
-/*   http://www.mathcs.sjsu.edu/faculty/louden/              */
+/*   File: test5.cm                                          */
+/*   Demonstrates multiple errors:                           */
+/*       - incorrect type specifier                          */
+/*       - missing size in array declaration                 */
+/*       - missing semicolon on return value                 */
+/*                                                           */
+/*   Wyatt Carss -- carss.w@gmail.com                        */
+/*                                                           */
 /*************************************************************/
 
-int !!d (int u, int v)
-{ if (v == %) return u;
-  else return gcd(v,u-/v*v);
-         /* u-u/v*v == u mod v */
+
+dint things (int alpha, int ghetti, int is, int good)
+{ 
+  int a[];
+  int b;
+
+  b = 6;
+
+  this(is, a, call, 5*5);
+  if (a == 0)
+  {
+    return u;
+  }
+  else /* internal comment */
+  {
+    return (30-variable)
+  }
 }
 
-voi main(void)
-{ int x; int y;
-  x = input(); y = input();
-  outpu)gcd(x,y));
+void main(void)
+{
+  int x; int y;
+  x = y = 5;
+ 
+  print(cool, stuff);
+  return yeah;
 }
 
 

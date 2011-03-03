@@ -1,13 +1,9 @@
 /*************************************************************/
-/*   File: GCD.CM                                            */
-/*   A C- program to perform Euclid's Algorithm              */
-/*     to compute gcd                                        */
-/*   From: Compiler Construction: Principles and Practice    */
-/*         PWS Publishing Co., 1997.                         */
-/*   K. Louden, Dept. of Math & Computer Science             */
-/*   San Jose State University, San Jose, CA 95192-0103      */
-/*   (408) 924-5134   louden@cs.sjsu.edu                     */
-/*   http://www.mathcs.sjsu.edu/faculty/louden/              */
+/*   File: test2.cm                                          */
+/*   Demonstrates a broken relop expression                  */
+/*                                                           */
+/*   Wyatt Carss -- carss.w@gmail.com                        */
+/*                                                           */
 /*************************************************************/
 
 int gcd (int u, int v)
