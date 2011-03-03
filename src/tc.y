@@ -13,6 +13,7 @@
 #define YYSTYPE type_t
 static char * savedName; /* for use in assignments */
 static int savedLineNo;  /* ditto */
+static int saved_col;
 static TreeNode * savedTree; /* stores syntax tree for later return */
 
 typedef union type_t type_t;
@@ -26,9 +27,17 @@ union type_t
 extern int yychar;
 
 int yyerror(char * message)
-{ fprintf(listing,"Syntax error at line %d, col %d: %s\n",lineno,col,message);
-  fprintf(listing,"Current token: ");
-  printToken(yychar,tokenString);
+{
+  int i;
+
+  fprintf(listing,"\nSyntax error at line %d: col %d, at ",lineno,col,message);
+  printToken(yychar, next_token);
+  fprintf(listing,"Current line:\n%s\n",current_line);
+
+  for(i = 1; i < strlen(current_line); i++)
+    fprintf(listing,"-");
+
+  fprintf(listing,"^\n");
   return 0;
 }
 
@@ -208,7 +217,6 @@ local_declarations	: local_declarations var_declaration
 
 stmt_list	: stmt_list stmt
 			{
-			  printf("statement: %s\n", tokenString);
 			  TreeNode * t = $1.node;
 			  if (t != NULL)
 			  {
@@ -226,15 +234,15 @@ stmt_list	: stmt_list stmt
 		;
 
 stmt	: expr_stmt
-		{ $$.node = $1.node; }
+		{ saved_col = col; $$.node = $1.node; }
 	| compound_stmt
-		{ $$.node = $1.node; }
+		{ saved_col = col; $$.node = $1.node; }
 	| selection_stmt
-		{ $$.node = $1.node; }
+		{ saved_col = col; $$.node = $1.node; }
 	| iteration_stmt
-		{ $$.node = $1.node; }
+		{ saved_col = col; $$.node = $1.node; }
 	| return_stmt
-		{ $$.node = $1.node; }
+		{ saved_col = col; $$.node = $1.node; }
 	;
 
 expr_stmt	: expr SEMICOLON
@@ -288,6 +296,12 @@ expr	: var ASSIGN expr
 		{
 		  $$.node = $1.node;
 		}
+/*	| error { 
+		  $$.node = newErrNode();
+		  $$.node->attr.name = copyString(current_line);
+		  $$.node->expected = copyString("expression");
+		  $$.node->col =  col;printf("\n\nunexpected!\n\n");
+		}*/
 	;
 
 var	: ID
@@ -318,6 +332,13 @@ simple_expr	: additive_expr relop additive_expr
 			}
 		| additive_expr
 			{ $$.node = $1.node; }
+		| additive_expr error
+			{
+			  $$.node = newErrNode();
+			  $$.node->attr.name = copyString(current_line);
+			  $$.node->expected = copyString("Relation or Additive expression (eg '1 != 0' or '4 + 6')");
+			  $$.node->col = col;
+			}
 		;
 
 relop	: LTEQ
@@ -350,6 +371,14 @@ relop	: LTEQ
 		  $$.node = newExpNode(Op);
 		  $$.node->attr.op = NEQ;
 		}
+	| error
+		{
+		  $$.node = newErrNode();
+		  $$.node->attr.name = copyString(current_line);
+		  $$.node->expected = copyString("Operator (eg <, >, <=, ==)");
+		  $$.node->col = col;
+		  /*yyerrok;*/ 
+		}
 	;
 
 additive_expr	: additive_expr addop term
@@ -371,6 +400,13 @@ additive_expr	: additive_expr addop term
 			}
 		| term
 			{ $$.node = $1.node; }
+		| error
+			{
+		  $$.node = newErrNode();
+		  $$.node->attr.name = copyString(current_line);
+		  $$.node->expected = copyString("Term (eg '5' or var_name)");
+		  $$.node->col =  col;/*printf("\n\nunexpected!\n\n");*/
+			}
 		;
 
 addop	: PLUS

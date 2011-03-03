@@ -19,8 +19,8 @@ void printToken( int token, const char* tokenString )
 	case RETURN:
 	case VOID:
 	case WHILE:
-	    /*case READ:
-	      case WRITE:*/
+	    //case READ:
+	    //case WRITE:
 	    fprintf(listing, "reserved word: %s\n", tokenString);
 	    break;
 	case PLUS: fprintf(listing,"+\n"); break;
@@ -47,7 +47,7 @@ void printToken( int token, const char* tokenString )
 		  break;
 	case ID: fprintf(listing, "ID, name= %s\n", tokenString);
 		 break;
-	case ERROR: fprintf(listing, "ERROR: %s\n", tokenString);
+	case ERROR: fprintf(listing, "'%s'\n", tokenString);
 		    break;
 	default: /* should never happen */
 		    fprintf(listing,"Unknown token: %d\n",token);
@@ -107,7 +107,7 @@ TreeNode * newDeclNode(DeclKind kind)
     return t;
 }
 
-/* newExpNode creates a new expression node for syntax tree construction
+/* newListNode creates a new List node for syntax tree construction
  */
 TreeNode * newListNode(ListKind kind)
 { TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
@@ -120,6 +120,24 @@ TreeNode * newListNode(ListKind kind)
 	t->nodekind = List;
 	t->kind.list = kind;
 	t->lineno = lineno;
+	t->type = Void;
+    }
+    return t;
+}
+
+/* newExpNode creates a new Error node for syntax tree construction
+ */
+TreeNode * newErrNode()
+{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+    int i;
+    if (t==NULL)
+	fprintf(listing,"Out of memory error at line %d\n",lineno);
+    else {
+	for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+	t->sibling = NULL;
+	t->nodekind = Error;
+	t->lineno = lineno;
+	t->col = col;
 	t->type = Void;
     }
     return t;
@@ -263,6 +281,16 @@ void printTree( TreeNode * tree )
 		    fprintf(listing, "Args List\n");
 		    break;
 	    }
+	}
+	else if(tree->nodekind == Error)
+	{
+	    int i;
+	    fprintf(listing, "Error:\n%s\n", tree->attr.name);
+	    for(i = 0; i < tree->col-1; i++)
+	    {
+	        printf("-");
+	    }
+	    printf("^\nExpected: %s\n", tree->expected);
 	}
 	else fprintf(listing,"Unknown node kind\n");
 	for (i=0;i<MAXCHILDREN;i++)

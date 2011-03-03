@@ -30,7 +30,7 @@ extern int col; /* source line number for listing */
 /***********   Syntax tree for parsing ************/
 /**************************************************/
 
-typedef enum {Stmt,Exp,Decl,List} NodeKind;
+typedef enum {Stmt, Exp, Decl, List, Error} NodeKind;
 typedef enum {If, Iter, Assign, Cmpd, Return, Call} StmtKind;
 typedef enum {Factor, Const, Additive, Simple, Id, Term, Op} ExpKind;
 typedef enum {Var, Fun, Param, Type} DeclKind;
@@ -45,6 +45,8 @@ typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
      struct treeNode * sibling;
      int lineno;
+     int col;
+     char *expected;
      NodeKind nodekind;
      union { StmtKind stmt; ExpKind exp; DeclKind decl; ListKind list; } kind;
      union { int op;

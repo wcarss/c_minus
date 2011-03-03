@@ -11,6 +11,8 @@
 
 /* tokenString array stores the lexeme of each token */
 extern char tokenString[MAXTOKENLEN+1];
+extern char next_token[MAXTOKENLEN+1];
+extern char current_line[100];
 
 /* returns the next token in source file
  */

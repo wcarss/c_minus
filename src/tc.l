@@ -16,6 +16,8 @@
 
 /* lexeme of identifier or reserved word */
 char tokenString[MAXTOKENLEN+1];
+char next_token[MAXTOKENLEN+1];
+char current_line[100];
 %}
 
 digit       [0-9]
@@ -54,14 +56,14 @@ whitespace  [ \t]+
 "}"             {col += 1; return RBRACE;}
 {identifier}    {col += strlen(yytext); return ID;}
 {number}        {col += strlen(yytext); return NUM;}
-{newline}       {col = 0; lineno++;}
-{whitespace}    {col += strlen(yytext); /* skip whitespace */}
+{newline}       {col = 0; memset(current_line, 0, 100); lineno++;}
+{whitespace}    {col += strlen(yytext); strcat(current_line, yytext);/* skip whitespace */}
 "/*"             { char c; int s = 0;
                   do
                   { c = input();
 		    col++;
                     if (c == EOF) break;
-                    if (c == '\n'){col = 0; lineno++;}
+                    if (c == '\n'){col = 0; memset(current_line, 0, 100); lineno++;}
 		    
 		    if (s == 0 && c == '*') s = 1;
 		    else if (s == 1 && c == '*') s = 1;
@@ -69,7 +71,7 @@ whitespace  [ \t]+
 		    else s = 0;
                   } while (s != 2);
                 }
-.               {col += 1; return ERROR;}
+.               {col += strlen(yytext); return ERROR;}
 
 %%
 
@@ -81,13 +83,19 @@ int getToken(void)
     lineno++;
     yyin = source;
     yyout = listing;
+    strcpy(next_token, "first");
   }
   currentToken = yylex();
-  if(currentToken == NUM || currentToken == ID)
-    strncpy(tokenString, yytext, MAXTOKENLEN);
-  if (TraceScan) {
+  strcat(current_line, yytext);
+  if(strcmp(next_token, "first") != 0)
+  {
+    strncpy(tokenString, next_token, MAXTOKENLEN);
+  }
+  /*if(currentToken == NUM || currentToken == ID)
+  */  strncpy(next_token, yytext, MAXTOKENLEN);
+  if (TraceScan == TRUE) {
     fprintf(listing,"\t%d:%d: ",lineno,col);
-    printToken(currentToken,tokenString);
+    printToken(currentToken,next_token);
   }
   return currentToken;
 }

@@ -22,6 +22,9 @@ TreeNode * newDeclNode(DeclKind);
 /* creates a new list node for syntax tree construction */
 TreeNode * newListNode(ListKind);
 
+/* creates a new error node for syntax tree construction */
+TreeNode * newErrNode();
+
 /* allocates and makes a new copy of an existing string */
 char * copyString( char * );
 

@@ -24,18 +24,26 @@ FILE * code;
 
 /* allocate and set tracing flags */
 int TraceScan = TRUE;
-int TraceParse = TRUE;
+int TraceParse = TRUE; 
 int TraceAnalyze = FALSE;
 int TraceCode = FALSE;
 
 main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
+  int a_flag = 0;
   int ttype;
   char pgm[120]; /* source code file name */
-  if (argc != 2)
+  if (argc < 2)
     { fprintf(stderr,"usage: %s <filename>\n",argv[0]);
       exit(1);
     }
+  if (argc == 3)
+  {
+    if(strcmp(argv[2], "-a") == 0)
+    {
+      TraceScan = FALSE;	
+    }
+  }
   strcpy(pgm,argv[1]) ;
   if (strchr (pgm, '.') == NULL)
      strcat(pgm,".cm");
@@ -47,6 +55,7 @@ main( int argc, char * argv[] )
   listing = stdout; /* send listing to screen */
   fprintf(listing,"\nC Minus compilation: %s\n",pgm);
 #if NO_PARSE
+  //if(a_flag == 0)
   while( (ttype=getToken())!= 0 )
     printToken( ttype, tokenString );
 #else
