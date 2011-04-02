@@ -21,6 +21,7 @@ union type_t
 {
 	TreeNode *node;
 	char *str;
+	int op;
 };
 
 extern int yychar;
@@ -116,7 +117,7 @@ var_declaration	: type_specifier ID
 			{
 			  $$.node = NULL;
 			}
-			 LBRACKET error
+			LBRACKET error
 			{
 			  $$.node = newErrNode();
 			  $$.node->attr.name = copyString(current_line);
@@ -302,10 +303,10 @@ return_stmt	: RETURN SEMICOLON
 			}
 		| RETURN error
 			{
-		  $$.node = newErrNode();
-		  $$.node->attr.name = copyString(current_line);
-		  $$.node->expected = copyString("semicolon");
-		  $$.node->col =  col;	
+			  $$.node = newErrNode();
+			  $$.node->attr.name = copyString(current_line);
+			  $$.node->expected = copyString("semicolon");
+			  $$.node->col =  col;	
 			} 
 		;
 
@@ -343,7 +344,7 @@ var	: ID
 		  $$.node = newExpNode(Id);
 		  $$.node->attr.name = $2.str;
 		  $$.node->lineno = savedLineNo;
-		  $$.node->child[1] = $4.node;	
+		  $$.node->child[1] = $4.node;
 		}
 	;
 
@@ -351,7 +352,8 @@ simple_expr	: additive_expr relop additive_expr
 			{
 			  $$.node = newExpNode(Simple);
 			  $$.node->child[0] = $1.node;
-			  $$.node->child[1] = $2.node;
+			  /*$$.node->child[1] = $2.node;*/
+			  $$.node->attr.op = $2.op;
 			  $$.node->child[2] = $3.node;
 			}
 		| additive_expr
@@ -365,7 +367,7 @@ simple_expr	: additive_expr relop additive_expr
 			}
 		;
 
-relop	: LTEQ
+/*relop	: LTEQ
 		{
 		  $$.node = newExpNode(Op);
 		  $$.node->attr.op = LTEQ;
@@ -402,6 +404,33 @@ relop	: LTEQ
 		  $$.node->expected = copyString("Operator (eg <, >, <=, ==)");
 		  $$.node->col = col;
 		  /*yyerrok;*/ 
+	/*	}
+	;
+*/
+
+relop : LTEQ
+		{
+		  $$.op = LTEQ;
+		}
+	| LT
+		{ 
+		  $$.op = LT;
+		}
+	| GT	
+		{ 
+		  $$.op = GT;
+		}
+	| GTEQ	
+		{ 
+		  $$.op = GTEQ;
+		}
+	| EQ	
+		{ 
+		  $$.op = EQ;
+		}
+	| NEQ	
+		{ 
+		  $$.op = NEQ;
 		}
 	;
 
@@ -490,7 +519,8 @@ factor	: LPAREN expr RPAREN
 	| NUM
 		{ 
 		  $$.node = newExpNode(Const);
-		  $$.node->attr.val = atoi(tokenString);
+		  printf("the token is a NUM, and it's -%s-\n", next_token);
+		  $$.node->attr.val = atoi(next_token);
 		}
 	;
 

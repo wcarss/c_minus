@@ -230,7 +230,8 @@ void printTree( TreeNode * tree )
 		    fprintf(listing,"Additive\n");
 		    break;
 		case Simple:
-		    fprintf(listing,"Simple\n");
+		    fprintf(listing,"relop: ");
+		    printToken(tree->attr.op,"\0");
 		    break;
 		case Term:
 		    fprintf(listing,"Term\n");
