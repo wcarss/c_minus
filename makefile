@@ -10,4 +10,5 @@ clean:
 
 cleanall:
 	rm -f cm
-	cd src; make cleanall 
+	cd src; make cleanall
+
