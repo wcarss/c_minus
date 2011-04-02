@@ -84,7 +84,6 @@ TreeNode * newExpNode(ExpKind kind)
 	t->nodekind = Exp;
 	t->kind.exp = kind;
 	t->lineno = lineno;
-	t->type = Void;
     }
     return t;
 }
@@ -102,8 +101,8 @@ TreeNode * newDeclNode(DeclKind kind)
 	t->nodekind = Decl;
 	t->kind.decl = kind;
 	t->lineno = lineno;
-	t->type = Void;
     }
+    /*if(t == 0x3) printf("RIGHT HERE HOLY CRAP\n");*/
     return t;
 }
 
@@ -120,7 +119,6 @@ TreeNode * newListNode(ListKind kind)
 	t->nodekind = List;
 	t->kind.list = kind;
 	t->lineno = lineno;
-	t->type = Void;
     }
     return t;
 }
@@ -138,7 +136,7 @@ TreeNode * newErrNode()
 	t->nodekind = Error;
 	t->lineno = lineno;
 	t->col = col;
-	t->type = Void;
+	strcpy(t->type,"Void");
     }
     return t;
 }
@@ -192,8 +190,8 @@ void printTree( TreeNode * tree )
 		    fprintf(listing,"While\n");
 		    break;
 		case Assign:
-		    fprintf(listing,"Assignment:");
-		    printToken(tree->attr.op,"\0");
+		    /*fprintf(listing,"");*/
+		    printToken(tree->op,"\0");
 		    break;
 		case Cmpd:
 		    fprintf(listing,"Compound\n");
@@ -202,7 +200,7 @@ void printTree( TreeNode * tree )
 		    fprintf(listing,"Return\n");
 		    break;
 		case Call:
-		    fprintf(listing,"Call of: %s\n",tree->attr.name);
+		    fprintf(listing,"%s()\n",tree->name);
 		    break;
 		default:
 		    fprintf(listing,"Unknown ExpNode kind\n");
@@ -214,24 +212,24 @@ void printTree( TreeNode * tree )
 	    switch (tree->kind.exp)
 	    {
 		case Op:
-		    fprintf(listing,"Op: ");
-		    printToken(tree->attr.op,"\0");
+		    /*fprintf(listing,"Op: ");*/
+		    printToken(tree->op,"\0");
 		    break;
 		case Const:
-		    fprintf(listing,"Const: %d\n",tree->attr.val);
+		    fprintf(listing,"%d\n",tree->val);
 		    break;
 		case Id:
-		    fprintf(listing,"Id: %s\n",tree->attr.name);
+		    fprintf(listing,"%s\n",tree->name);
 		    break;
 		case Factor:
-		    fprintf(listing,"Factor\n");
+		    fprintf(listing,"()\n");
 		    break;
 		case Additive:
 		    fprintf(listing,"Additive\n");
 		    break;
 		case Simple:
-		    fprintf(listing,"relop: ");
-		    printToken(tree->attr.op,"\0");
+		    /*fprintf(listing,"");*/
+		    printToken(tree->op,"\0");
 		    break;
 		case Term:
 		    fprintf(listing,"Term\n");
@@ -246,16 +244,26 @@ void printTree( TreeNode * tree )
 	    switch(tree->kind.decl)
 	    {
 		case Var:
-		   fprintf(listing, "Var: %s\n", tree->attr.name);
-		   break;	
+		   fprintf(listing, "%s : %s", tree->name, tree->type);
+		   if(strcmp(tree->type, "Array") == 0) fprintf(listing, " [%d]", tree->val);
+		   fprintf(listing, "\n");
+		 /*  if(tree->type == Void) fprintf(listing, "void\n");
+		   else if(tree->type == Integer) fprintf(listing, "integer\n");
+		   else if(tree->type == Array) fprintf(listing, "array\n");
+		 */  break;	
 		case Fun:	
-		   fprintf(listing, "Fun: %s\n", tree->attr.name);
-		   break;	
+		   fprintf(listing, "function '%s', %s\n", tree->name, tree->type);
+		 /*  if(tree->type == Void) fprintf(listing, "void\n");
+		   else if(tree->type == Integer) fprintf(listing, "integer\n");
+		 */  break;	
 		case Param:	
-		   fprintf(listing, "Param: %s\n", tree->attr.name);
-		   break;	
+		   fprintf(listing, "Param: %s, %s\n", tree->name, tree->type);
+		 /*  if(tree->type == Void) fprintf(listing, "void\n");
+		   else if(tree->type == Integer) fprintf(listing, "integer\n");
+		   else if(tree->type == Array) fprintf(listing, "array\n");
+		 */  break;	
 		case Type:	
-		   fprintf(listing, "Type: %s\n", tree->attr.name);
+		   fprintf(listing, "Type: %s\n", tree->name);
 		   break;	
 	    }
 	}
@@ -286,7 +294,7 @@ void printTree( TreeNode * tree )
 	else if(tree->nodekind == Error)
 	{
 	    int i;
-	    fprintf(listing, "Error:\n%s\n", tree->attr.name);
+	    fprintf(listing, "Error:\n%s\n", tree->name);
 	    for(i = 0; i < tree->col-1; i++)
 	    {
 	        printf("-");

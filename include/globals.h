@@ -37,7 +37,7 @@ typedef enum {Var, Fun, Param, Type} DeclKind;
 typedef enum {Params, Local, StmtList, AdditiveList, TermList, Args} ListKind;
 
 /* ExpType is used for type checking */
-typedef enum {Void,Integer} ExpType;
+typedef enum {Dummy, Ummyd, Void,Integer,Array} ExpType;
 
 #define MAXCHILDREN 3
 
@@ -47,13 +47,17 @@ typedef struct treeNode
      int lineno;
      int col;
      char *expected;
+     int op;
+     int val;
+     char *name;
+     char *type;
      NodeKind nodekind;
+     /*ExpType type; *//* for type checking of exps */
      union { StmtKind stmt; ExpKind exp; DeclKind decl; ListKind list; } kind;
-     union { int op;
+/*     union { int op;
              int val;
              char * name; } attr;
-     ExpType type; /* for type checking of exps */
-   } TreeNode;
+*/   } TreeNode;
 
 /**************************************************/
 /***********   Flags for tracing       ************/

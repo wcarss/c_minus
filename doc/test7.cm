@@ -13,13 +13,9 @@ int things (int alpha, int ghetti, int is, int good)
 
   this(is, a, call, 5*5);
   if (a == 0)
-  {
     return u;
-  }
   else /* internal comment */
-  {
     return (30-variable);
-  }
 }
 
 void main(void)

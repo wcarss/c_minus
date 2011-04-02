@@ -1,0 +1,57 @@
+/*************************************************************/
+/*   File: test2.cm                                          */
+/*   Demonstrates a broken relop expression                  */
+/*                                                           */
+/*   Wyatt Carss -- carss.w@gmail.com                        */
+/*                                                           */
+/*************************************************************/
+
+int gcd (int u, int v)
+{ if (v == 0) return u;
+  else return gcd(v,u-u/v*v*v+(3-2/(3*(4-1))));
+         /* u-u/v*v == u mod v */
+}
+
+void main(void)
+{ int x; int y;
+  x = input(); y = input();
+  output(gcd(x,y));
+}
+
+Syntax tree:
+  function 'gcd', Integer
+    Param: u, Integer
+    Param: v, Integer
+    Compound
+      If
+        ==
+          v
+          0
+        Return
+          u
+        Return
+          gcd()
+            v
+            +
+              -
+                u
+                *
+                  *
+                    /
+                      u
+                      v
+                    v
+                  v
+              Factor
+                -
+                  3
+                  /
+                    2
+                    Factor
+                      *
+                        3
+                        Factor
+                          -
+                            4
+                            1
+
