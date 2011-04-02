@@ -436,15 +436,19 @@ relop : LTEQ
 
 additive_expr	: additive_expr addop term
 			{
-			  TreeNode * t = $1.node;
+		/*	  TreeNode * t = $1.node;
         	          if (t != NULL)
         	          {
 				while (t->sibling != NULL)
 					t = t->sibling;
-				t->sibling = $3.node;
-				t->child[0] = $2.node;
-				$$.node = $1.node;
-			  }
+				/*t->sibling = $3.node;
+				t->child[0] = $2.node;*/
+				$$.node = newExpNode(Simple);
+				$$.node->child[0] = $1.node;
+				$$.node->child[1] = $3.node;
+				$$.node->attr.op = $2.op;
+				/*$$.node = $1.node;*/
+		/*	  }
 			  else $$.node = $3.node;/*
 			  $$.node = newListNode(AdditiveList);
 			  $$.node->child[0] = $1.node;
@@ -464,27 +468,32 @@ additive_expr	: additive_expr addop term
 
 addop	: PLUS
 		{
-		  $$.node = newExpNode(Op);
-		  $$.node->attr.op = PLUS;
+		  /*$$.node = newExpNode(Op);
+		  $$.node->attr.op = PLUS;*/
+		  $$.op = PLUS;
 		}
 	| MINUS
 		{
-		  $$.node = newExpNode(Op);
-		  $$.node->attr.op = MINUS; 
+		  /*$$.node = newExpNode(Op);
+		  $$.node->attr.op = MINUS; */
+		  $$.op = MINUS;
 		}
 	;
 
 term	: term mulop factor
 		{
-			TreeNode * t = $1.node;
+		/*	TreeNode * t = $1.node;
         	          if (t != NULL)
         	          {
 				while (t->sibling != NULL)
 					t = t->sibling;
-				t->sibling = $3.node;
-				t->child[0] = $2.node;
-				$$.node = $1.node;
-			  }
+				/*t->sibling = $3.node;
+				t->child[0] = $2.node;*/
+			$$.node = newExpNode(Simple);
+				$$.node->child[0] = $1.node;
+				$$.node->child[1] = $3.node;
+				$$.node->attr.op = $2.op;
+		/*	  }
 			  else $$.node = $3.node;/*
 			  $$.node = newListNode(TermList);
 			  $$.node->child[0] = $1.node;
@@ -497,13 +506,15 @@ term	: term mulop factor
 
 mulop	: TIMES
 		{ 
-		  $$.node = newExpNode(Op);
-		  $$.node->attr.op = TIMES; 
+		  /*$$.node = newExpNode(Op);
+		  $$.node->attr.op = TIMES; */
+		  $$.op = TIMES;
 		}
 	| OVER
 		{
-		  $$.node = newExpNode(Op); 
-		  $$.node->attr.op = OVER; 
+		  /*$$.node = newExpNode(Op); 
+		  $$.node->attr.op = OVER; */
+		  $$.op = OVER;
 		}
 	;
 
