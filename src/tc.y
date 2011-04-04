@@ -203,7 +203,6 @@ local_declarations	: local_declarations var_declaration
 				  else
 				  {
 					 $$.node = $2.node;
-					 if($2.node == 0x3) printf(".. so it is here\n");
 				  }
 				}
 			| { $$.node = NULL; }
