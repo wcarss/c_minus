@@ -116,7 +116,7 @@ TreeNode * newListNode(ListKind kind)
     else {
 	for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
 	t->sibling = NULL;
-	t->nodekind = List;
+	t->nodekind = ListK;
 	t->kind.list = kind;
 	t->lineno = lineno;
     }
@@ -136,7 +136,6 @@ TreeNode * newErrNode()
 	t->nodekind = Error;
 	t->lineno = lineno;
 	t->col = col;
-	strcpy(t->type,"Void");
     }
     return t;
 }
@@ -267,7 +266,7 @@ void printTree( TreeNode * tree )
 		   break;	
 	    }
 	}
-	else if(tree->nodekind == List)
+	else if(tree->nodekind == ListK)
 	{
 	    switch(tree->kind.list)
 	    {

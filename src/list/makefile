@@ -15,7 +15,8 @@ default: ugly
 
 fresh: main clean
 
-library: list.o clean
+library: 
+	gcc -c list.c -o ../list.o $(FLAGS)
 
 ugly: list.o main
 

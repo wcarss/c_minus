@@ -179,7 +179,7 @@ void add_to_list(List l, int num, int selector)
 int print_identities(List l)
 {
   Node temp;
-  int status = unset;
+  //int status = unset;
   //  printf("list has %d elements\n", l->size);
 
   if(NULL == l || NULL == l->current)

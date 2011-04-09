@@ -9,9 +9,11 @@
 #include "util.h"
 #include "scan.h"
 #include "parse.h"
+#include "list/list.h"
+#include "hash/hash.h"
 
 #define YYSTYPE type_t
-static int savedLineNo;  /* ditto */
+static int savedLineNo;
 static int saved_col;
 static TreeNode * savedTree; /* stores syntax tree for later return */
 
@@ -29,6 +31,7 @@ extern int yychar;
 int yyerror(char * message)
 {
   int i;
+  //Node temp;
 
   fprintf(listing,"\nSyntax error at line %d: col %d, at ",lineno,col);
   printToken(yychar, next_token);
@@ -37,6 +40,18 @@ int yyerror(char * message)
   for(i = 1; i < strlen(current_line); i++)
     fprintf(listing,"-");
 
+/*  printf("Testing...\n");
+  temp = l->current;
+  list_root(l);
+  while(l->current != NULL)
+  {
+    printf("%d: %s\n", l->current->id, l->current->str);
+    l->current = l->current->next;
+  }
+  l->current = temp;
+//  list_kill(l);
+  printf("\nTest complete.\n");
+*/
   fprintf(listing,"^\n");
   return 0;
 }
@@ -96,6 +111,8 @@ var_declaration	: type_specifier ID SEMICOLON
 			  $$.node = newDeclNode(Var);
 			  $$.node->type = $1.str;
 			  $$.node->name = copyString(tokenString);
+			  if(lookup(h, tokenString) != NULL) printf("%s is previously declared\n", tokenString);
+			  else insert(h, tokenString, $1.str, lineno, 0, 0);
 			}
 		| type_specifier ID
 			{
@@ -109,6 +126,8 @@ var_declaration	: type_specifier ID SEMICOLON
 			  $$.node->name = $3.str;
 			  $$.node->lineno = savedLineNo;
 			  $$.node->val = atoi(tokenString); /* $5.op; */
+			  if(lookup(h, $3.str) != NULL) printf("%s is previously declared\n", $3.str);
+			  else insert(h, $3.str, "Array", savedLineNo, 0, atoi(tokenString));
 			}
 		;
 
@@ -124,6 +143,7 @@ type_specifier	: INT
 
 fun_declaration	: type_specifier ID 
 			{
+			  printf("New scope\n");
 			  savedLineNo = lineno;
 			  $$.str = copyString(tokenString);
 			}
@@ -135,6 +155,8 @@ fun_declaration	: type_specifier ID
 			  $$.node->type = $1.str;
 			  $$.node->child[0] = $5.node;
 			  $$.node->child[1] = $7.node;
+			  if(lookup(h, $3.str) != NULL) printf("%s is previously declared\n", $3.str);
+			  else insert(h, $3.str, $1.str, savedLineNo, 0, 0);
 			}
 		;
 
@@ -164,6 +186,8 @@ param	: type_specifier ID
 		  $$.node = newDeclNode(Param);
 		  $$.node->type = $1.str;
 		  $$.node->name = copyString(tokenString);
+		  if(lookup(h, tokenString) != NULL) printf("%s is previously declared\n", tokenString);
+		  else insert(h, tokenString, $1.str, 0, 0, 0);
 		}
 	| type_specifier ID
 		{
@@ -176,6 +200,8 @@ param	: type_specifier ID
 		  $$.node->type = $1.str;
 		  $$.node->name = $3.str;
 		  $$.node->lineno = savedLineNo;
+		  if(lookup(h, $3.str) != NULL) printf("%s is previously declared\n", $3.str);
+		  else insert(h, $3.str, "Array", savedLineNo, 0, 0);
 		}
 	;
 
@@ -205,7 +231,7 @@ local_declarations	: local_declarations var_declaration
 					 $$.node = $2.node;
 				  }
 				}
-			| { $$.node = NULL; }
+			| { $$.node = NULL; printf("New scope\n"); }
 			;
 
 stmt_list	: stmt_list stmt
@@ -290,6 +316,11 @@ expr	: var ASSIGN expr
 
 var	: ID
 		{
+		  if(lookup(h, tokenString) == NULL)
+		  {
+		    printf("%s undeclared \n", tokenString);
+		    insert(h, tokenString, "undeclared", 0, 0, 0);
+		  }
 		  $$.node = newExpNode(Id);
 		  $$.node->name = copyString(tokenString);
 		}
@@ -304,6 +335,11 @@ var	: ID
 		  $$.node->name = $2.str;
 		  $$.node->lineno = savedLineNo;
 		  $$.node->child[1] = $4.node;
+		  if(lookup(h, $2.str) == NULL)
+		  {
+		    printf("%s undeclared\n", $2.str);
+		    insert(h, $2.str, "undeclared", 0, 0, 0);
+		  }
 		}
 	;
 

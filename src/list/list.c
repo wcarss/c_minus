@@ -140,6 +140,7 @@ int list_kill(List l)
   /* See the note for existing nodes in node_kill */
   existing_lists--;
 
+  l->current = l->root;
   while(got_null != list_remove(l));
 
   l->root = NULL;
@@ -275,6 +276,11 @@ int list_remove(List l)
   if(NULL == l || NULL == l->root)
   {
     return got_null;
+  }
+
+  if(NULL == l->current)
+  {
+    return is_null;
   }
 
   if(l->current == l->root)

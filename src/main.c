@@ -9,11 +9,12 @@
 #define NO_PARSE FALSE
 
 #include "util.h"
-#if NO_PARSE
+#include "list/list.h"
+//#if NO_PARSE
 #include "scan.h"
-#else
+//#else
 #include "parse.h"
-#endif
+//#endif
 
 /* allocate global variables */
 int lineno = 0;
@@ -25,12 +26,13 @@ FILE * code;
 /* allocate and set tracing flags */
 int TraceScan = TRUE;
 int TraceParse = TRUE; 
-int TraceAnalyze = FALSE;
+int TraceAnalyze = TRUE;
 int TraceCode = FALSE;
 
 int main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
   char pgm[120]; /* source code file name */
+  hash_new(&h);
   if (argc < 2)
     { fprintf(stderr,"usage: %s <filename>\n",argv[0]);
       exit(1);
@@ -39,7 +41,13 @@ int main( int argc, char * argv[] )
   {
     if(strcmp(argv[2], "-a") == 0)
     {
-      TraceScan = FALSE;	
+      TraceScan = FALSE;
+      TraceAnalyze = FALSE;	
+    }
+    else if(strcmp(argv[2], "-s") == 0)
+    {
+      TraceScan = FALSE;
+      TraceParse = FALSE;
     }
   }
   strcpy(pgm,argv[1]) ;
@@ -62,6 +70,13 @@ int main( int argc, char * argv[] )
     fprintf(listing,"\nSyntax tree:\n");
     printTree(syntaxTree);
   }
+
+  if(TraceAnalyze) {
+    fprintf(listing, "\nSymbol Table:\n");
+    print_hash(h);
+  }
+  list_kill(l);
+  hash_kill(&h);
 #endif
   fclose(source);
   return 0;

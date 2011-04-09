@@ -1,6 +1,6 @@
 /****************************************************/
-/* File: tiny.l                                     */
-/* Lex specification for TINY                       */
+/* File: cm.l                                       */
+/* Lex specification for C Minus                    */
 /****************************************************/
 
 %{
@@ -8,6 +8,8 @@
 #include "util.h"
 #include "scan.h"
 #include "y.tab.h"
+#include "list/list.h"
+#include "hash/hash.h"
 
 /* may be of use later
 "input"          {col += 5; return READ;}
@@ -15,9 +17,12 @@
 */
 
 /* lexeme of identifier or reserved word */
+List l;
 char tokenString[MAXTOKENLEN+1];
 char next_token[MAXTOKENLEN+1];
 char current_line[100];
+int reset_flag = 0;
+Hash h = NULL;
 %}
 
 digit       [0-9]
@@ -56,9 +61,9 @@ whitespace  [ \t]+
 "}"             {col += 1; return RBRACE;}
 {identifier}    {col += strlen(yytext); return ID;}
 {number}        {col += strlen(yytext); return NUM;}
-{newline}       {col = 0; memset(current_line, 0, 100); lineno++;}
+{newline}       {col = 0; reset_flag = 1; list_kill(l); l = list_new(); memset(current_line, 0, 100); lineno++;}
 {whitespace}    {col += strlen(yytext); strcat(current_line, yytext);/* skip whitespace */}
-"/*"             { char c; int s = 0;
+"/*"            { char c; int s = 0;
                   do
                   { c = input();
 		    col++;
@@ -78,11 +83,18 @@ whitespace  [ \t]+
 int getToken(void)
 { static int firstTime = TRUE;
   int currentToken;
+  if (reset_flag)
+  {
+  //  list_kill(l);
+  //  l = list_new();
+    reset_flag = 0;
+  }
   if (firstTime)
   { firstTime = FALSE;
     lineno++;
     yyin = source;
     yyout = listing;
+    l = list_new();
     strcpy(next_token, "first");
   }
   currentToken = yylex();
@@ -93,6 +105,9 @@ int getToken(void)
   }
   /*if(currentToken == NUM || currentToken == ID)
   */  strncpy(next_token, yytext, MAXTOKENLEN);
+  list_add_back(l, node_new(NULL, NULL, NULL, NULL, NULL));
+  list_tail(l);
+  strcpy(l->current->str, yytext);
   if (TraceScan == TRUE) {
     fprintf(listing,"\t%d:%d: ",lineno,col);
     printToken(currentToken,next_token);
